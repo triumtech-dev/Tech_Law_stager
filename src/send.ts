@@ -63,7 +63,16 @@ export interface SendOptions {
 
 function readJson<T>(path: string): T {
   if (!existsSync(path)) throw new Error(`הקובץ ${path} לא נמצא. הרץ קודם את שלב הסריקה (scan)`)
-  return JSON.parse(readFileSync(path, 'utf8')) as T
+  return parseJsonSafe<T>(readFileSync(path, 'utf8'), 'קובץ JSON אינו תקין')
+}
+
+/** ⛔ הודעת שגיאה קבועה: טקסט המפענח עלול לצטט תוכן של הקובץ (פרטי קשר), ולכן לא מועבר הלאה. */
+export function parseJsonSafe<T>(text: string, message: string): T {
+  try {
+    return JSON.parse(text) as T
+  } catch {
+    throw new Error(message)
+  }
 }
 
 const YES = new Set(['כן', 'y', 'yes', 'Y'])
@@ -125,7 +134,7 @@ export async function runSend(options: SendOptions): Promise<SubmitResponse> {
     answers = await collectAnswers(findings, hash, options.prompter)
     writeFileSync(answersPath, `${JSON.stringify(answers, null, 2)}\n`, 'utf8')
   } else {
-    answers = options.answersJson !== undefined ? (JSON.parse(options.answersJson) as Answers) : readJson<Answers>(answersPath)
+    answers = options.answersJson !== undefined ? parseJsonSafe<Answers>(options.answersJson, 'קובץ התשובות אינו JSON תקין') : readJson<Answers>(answersPath)
     if (answers.findingsHash !== hash) throw new Error('הממצאים השתנו מאז שאישרת אותם. הרץ שוב את השליחה האינטראקטיבית')
   }
 

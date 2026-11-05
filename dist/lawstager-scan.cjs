@@ -1130,7 +1130,14 @@ var ANSWERS_FILE = "lawstager-answers.json";
 var BASELINE_FILE = "lawstager-baseline.json";
 function readJson(path) {
   if (!(0, import_node_fs3.existsSync)(path)) throw new Error(`\u05D4\u05E7\u05D5\u05D1\u05E5 ${path} \u05DC\u05D0 \u05E0\u05DE\u05E6\u05D0. \u05D4\u05E8\u05E5 \u05E7\u05D5\u05D3\u05DD \u05D0\u05EA \u05E9\u05DC\u05D1 \u05D4\u05E1\u05E8\u05D9\u05E7\u05D4 (scan)`);
-  return JSON.parse((0, import_node_fs3.readFileSync)(path, "utf8"));
+  return parseJsonSafe((0, import_node_fs3.readFileSync)(path, "utf8"), "\u05E7\u05D5\u05D1\u05E5 JSON \u05D0\u05D9\u05E0\u05D5 \u05EA\u05E7\u05D9\u05DF");
+}
+function parseJsonSafe(text, message) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(message);
+  }
 }
 var YES = /* @__PURE__ */ new Set(["\u05DB\u05DF", "y", "yes", "Y"]);
 async function collectAnswers(findings, hash, prompter) {
@@ -1190,7 +1197,7 @@ async function runSend(options) {
     (0, import_node_fs3.writeFileSync)(answersPath, `${JSON.stringify(answers, null, 2)}
 `, "utf8");
   } else {
-    answers = options.answersJson !== void 0 ? JSON.parse(options.answersJson) : readJson(answersPath);
+    answers = options.answersJson !== void 0 ? parseJsonSafe(options.answersJson, "\u05E7\u05D5\u05D1\u05E5 \u05D4\u05EA\u05E9\u05D5\u05D1\u05D5\u05EA \u05D0\u05D9\u05E0\u05D5 JSON \u05EA\u05E7\u05D9\u05DF") : readJson(answersPath);
     if (answers.findingsHash !== hash) throw new Error("\u05D4\u05DE\u05DE\u05E6\u05D0\u05D9\u05DD \u05D4\u05E9\u05EA\u05E0\u05D5 \u05DE\u05D0\u05D6 \u05E9\u05D0\u05D9\u05E9\u05E8\u05EA \u05D0\u05D5\u05EA\u05DD. \u05D4\u05E8\u05E5 \u05E9\u05D5\u05D1 \u05D0\u05EA \u05D4\u05E9\u05DC\u05D9\u05D7\u05D4 \u05D4\u05D0\u05D9\u05E0\u05D8\u05E8\u05D0\u05E7\u05D8\u05D9\u05D1\u05D9\u05EA");
   }
   const result = await transmit(
@@ -1234,14 +1241,14 @@ async function transmit(input, state, options) {
 // ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/hook.ts
 async function runHook(options) {
   if (!(0, import_node_fs4.existsSync)(options.baselinePath)) throw new Error("\u05D0\u05D9\u05DF \u05E7\u05D5\u05D1\u05E5 \u05D1\u05E1\u05D9\u05E1. \u05D4\u05E8\u05E5 \u05E7\u05D5\u05D3\u05DD send \u05D9\u05D3\u05E0\u05D9, \u05D5\u05D4\u05DB\u05E0\u05E1 \u05D0\u05EA lawstager-baseline.json \u05DC\u05E8\u05D9\u05E4\u05D5");
-  const baseline = JSON.parse((0, import_node_fs4.readFileSync)(options.baselinePath, "utf8"));
+  const baseline = parseJsonSafe((0, import_node_fs4.readFileSync)(options.baselinePath, "utf8"), "\u05E7\u05D5\u05D1\u05E5 \u05D4\u05D1\u05E1\u05D9\u05E1 \u05D0\u05D9\u05E0\u05D5 JSON \u05EA\u05E7\u05D9\u05DF");
   if (!isValidBaseline(baseline)) throw new Error("\u05E7\u05D5\u05D1\u05E5 \u05D4\u05D1\u05E1\u05D9\u05E1 \u05D0\u05D9\u05E0\u05D5 \u05EA\u05E7\u05D9\u05DF");
   const scan = runScan(options.root, { outDir: options.outDir, ...options.files ? { files: options.files } : {} });
   const diff = diffAgainstBaseline(baseline, scan.findings);
   if (!diff.significant) return { sent: false, reason: "no-legal-change" };
   const raw = options.answersJson ?? ((0, import_node_fs4.existsSync)((0, import_node_path4.join)(options.outDir, ANSWERS_FILE)) ? (0, import_node_fs4.readFileSync)((0, import_node_path4.join)(options.outDir, ANSWERS_FILE), "utf8") : void 0);
   if (raw === void 0) throw new Error("\u05D0\u05D9\u05DF \u05E7\u05D5\u05D1\u05E5 \u05EA\u05E9\u05D5\u05D1\u05D5\u05EA. \u05E9\u05DC\u05D9\u05D7\u05D4 \u05D9\u05D3\u05E0\u05D9\u05EA \u05E8\u05D0\u05E9\u05D5\u05E0\u05D4 \u05E0\u05D3\u05E8\u05E9\u05EA \u05DC\u05E4\u05E0\u05D9 \u05E9\u05D4\u05D4\u05D5\u05E7 \u05D9\u05DB\u05D5\u05DC \u05DC\u05E9\u05DC\u05D5\u05D7");
-  const answers = JSON.parse(raw);
+  const answers = parseJsonSafe(raw, "\u05E7\u05D5\u05D1\u05E5 \u05D4\u05EA\u05E9\u05D5\u05D1\u05D5\u05EA \u05D0\u05D9\u05E0\u05D5 JSON \u05EA\u05E7\u05D9\u05DF");
   if (answers.consentGiven !== true || answers.hookConsentGiven !== true) throw new Error("\u05DC\u05D0 \u05E0\u05D9\u05EA\u05E0\u05D4 \u05D4\u05E1\u05DB\u05DE\u05D4 \u05DC\u05D4\u05D5\u05E7. \u05DC\u05D0 \u05E0\u05E9\u05DC\u05D7 \u05D3\u05D1\u05E8");
   const result = await transmit(
     {

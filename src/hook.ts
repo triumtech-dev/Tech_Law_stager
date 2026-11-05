@@ -12,7 +12,7 @@ import { diffAgainstBaseline, isValidBaseline } from './core/client/diff'
 import type { RepoFile } from './core/analyzer/types'
 
 import { runScan } from './scan'
-import { ANSWERS_FILE, transmit, type Answers, type SendOptions } from './send'
+import { ANSWERS_FILE, parseJsonSafe, transmit, type Answers, type SendOptions } from './send'
 
 export type HookOutcome = { sent: false; reason: 'no-legal-change' } | { sent: true; scanId: string; added: readonly string[]; removed: readonly string[] }
 
@@ -26,7 +26,7 @@ export interface HookOptions extends Omit<SendOptions, 'prompter' | 'outDir'> {
 
 export async function runHook(options: HookOptions): Promise<HookOutcome> {
   if (!existsSync(options.baselinePath)) throw new Error('אין קובץ בסיס. הרץ קודם send ידני, והכנס את lawstager-baseline.json לריפו')
-  const baseline: unknown = JSON.parse(readFileSync(options.baselinePath, 'utf8'))
+  const baseline: unknown = parseJsonSafe(readFileSync(options.baselinePath, 'utf8'), 'קובץ הבסיס אינו JSON תקין')
   if (!isValidBaseline(baseline)) throw new Error('קובץ הבסיס אינו תקין')
 
   const scan = runScan(options.root, { outDir: options.outDir, ...(options.files ? { files: options.files } : {}) })
@@ -36,7 +36,7 @@ export async function runHook(options: HookOptions): Promise<HookOutcome> {
   // רק מכאן יש תקשורת: התשובות והסכמת ההוק חייבות להגיע מהלקוח (סוד ב-CI או קובץ מקומי בתיקיית הפלט).
   const raw = options.answersJson ?? (existsSync(join(options.outDir, ANSWERS_FILE)) ? readFileSync(join(options.outDir, ANSWERS_FILE), 'utf8') : undefined)
   if (raw === undefined) throw new Error('אין קובץ תשובות. שליחה ידנית ראשונה נדרשת לפני שההוק יכול לשלוח')
-  const answers = JSON.parse(raw) as Answers
+  const answers = parseJsonSafe<Answers>(raw, 'קובץ התשובות אינו JSON תקין')
   if (answers.consentGiven !== true || answers.hookConsentGiven !== true) throw new Error('לא ניתנה הסכמה להוק. לא נשלח דבר')
 
   const result = await transmit(
