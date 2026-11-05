@@ -1,0 +1,59 @@
+# סטאג'ר משפטי: הוק לשימוש חוזר (R5c, אפיון v0.2 סעיף 5.3). רץ על כל דחיפה, ושולח דוח שינויים רק כשיש הבדל משפטי.
+# הלקוח קורא לו מ-workflow שלו, ומקבע את הגרסה ל-SHA מלא של commit:
+#   uses: <חשבון>/<ריפו-סטאג'ר>/.github/workflows/lawstager-hook-reusable.yml@<SHA מלא>
+#   secrets: { answers: ${{ secrets.LAWSTAGER_ANSWERS }} }
+# ⛔ בלי שינוי משפטי: אין שום קריאת רשת. ההוק אינו כותב לריפו, אינו פותח PR ואינו מעדכן מסמך.
+# ⛔ דורש קובץ בסיס `lawstager-baseline.json` בריפו של הלקוח (סוגי ממצאים בלבד, בלי פרטי קשר), ותשובות עם הסכמה חד-פעמית להוק.
+# ⛔ אותם כללי הפרדה כמו ב-workflow של הסריקה: הקוד של הלקוח הוא נתונים בלבד; הכלי קובץ מוכן שמורץ ב-node פשוט.
+name: lawstager-hook
+
+on:
+  workflow_call:
+    inputs:
+      lawyer-id:
+        description: מזהה עורך הדין מהקישור. ריק = פנייה למאגר
+        required: false
+        type: string
+        default: ''
+    secrets:
+      answers:
+        description: תוכן קובץ התשובות (כולל הסכמה חד-פעמית להוק). מכיל פרטי קשר
+        required: true
+
+permissions:
+  contents: read
+  id-token: write # אסימון OIDC בלבד. אין כתיבה לריפו
+
+jobs:
+  hook:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: משיכת הקוד של הלקוח (קריאה בלבד)
+        uses: actions/checkout@v4 # ⛔ לקבע ל-SHA בהעתקה לריפו הפומבי
+        with:
+          path: lawstager-client
+          persist-credentials: false
+
+      - name: משיכת חבילת הסריקה בגרסה המקובעת
+        uses: actions/checkout@v4 # ⛔ לקבע ל-SHA בהעתקה לריפו הפומבי
+        with:
+          repository: triumtech-dev/Tech_Law_stager
+          ref: LAWSTAGER_PACKAGE_SHA_TBD
+          path: lawstager-tool
+          persist-credentials: false
+
+      - name: הכנת הסביבה
+        uses: actions/setup-node@v4 # ⛔ לקבע ל-SHA בהעתקה לריפו הפומבי
+        with:
+          node-version: 22
+
+      - name: בדיקת שינוי משפטי ושליחה רק אם יש
+        env:
+          OUT_DIR: ${{ runner.temp }}/lawstager-out
+          LAWYER_ID: ${{ inputs.lawyer-id }} # דרך env ולא בתוך הפקודה, נגד הזרקת פקודה
+          LAWSTAGER_ANSWERS: ${{ secrets.answers }}
+        run: |
+          args=(--ci --answers-env LAWSTAGER_ANSWERS --out "$OUT_DIR")
+          if [ -n "$LAWYER_ID" ]; then args+=(--lawyer "$LAWYER_ID"); fi
+          node lawstager-tool/dist/lawstager-scan.cjs hook lawstager-client "${args[@]}"

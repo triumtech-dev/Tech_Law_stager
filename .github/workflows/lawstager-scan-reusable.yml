@@ -1,0 +1,72 @@
+# סטאג'ר משפטי: workflow לשימוש חוזר, המסלול המאומת (אפיון v0.2 סעיף 6.1).
+# הלקוח קורא לו מ-workflow שלו, ומקבע את הגרסה ל-SHA מלא של commit ולא לענף או לתג:
+#   uses: <חשבון>/<ריפו-סטאג'ר>/.github/workflows/lawstager-scan-reusable.yml@<SHA מלא>
+#   secrets: { answers: ${{ secrets.LAWSTAGER_ANSWERS }} }
+# השרת מקבל ממצאים כ"מאומתים" רק עם אסימון OIDC שה-job_workflow_ref שלו מצביע על ה-workflow הזה בגרסה מקובעת (R4b).
+#
+# ⛔ עיקרון ההפרדה (ממצא אבטחה, 5.11.2026): קוד הלקוח הוא נתונים בלבד.
+#   - הקוד נמשך לתיקייה `lawstager-client`, והכלי לתיקייה אחות `lawstager-tool`. אין חפיפה ואין הרצה מתוך תיקיית הלקוח.
+#   - הכלי הוא קובץ JavaScript מוכן (`dist/lawstager-scan.cjs`) שמורץ ב-`node` פשוט. בלי `npx`, בלי `npm install`,
+#     ולכן אין `.npmrc`, `package.json` או `node_modules` של הלקוח שמשפיעים על ההרצה.
+#   - הפלט כתוב לתיקיית זמני של ה-runner, מחוץ לקוד הנסרק.
+#   - התשובות עם פרטי הקשר עוברות כסוד (`LAWSTAGER_ANSWERS`), ולא כקובץ בריפו.
+# ⛔ אין כאן סודות משלנו. מצב: טיוטה בגיט הפרטי. מעתיקים לריפו הפומבי רק באישור פרדריק.
+name: lawstager-scan
+
+on:
+  workflow_call:
+    inputs:
+      lawyer-id:
+        description: מזהה עורך הדין מהקישור. ריק = פנייה למאגר
+        required: false
+        type: string
+        default: ''
+    secrets:
+      answers:
+        description: תוכן קובץ התשובות שנוצר בהרצה המקומית של send (מכיל פרטי קשר)
+        required: true
+
+permissions:
+  contents: read
+  id-token: write # אסימון OIDC בלבד. אין כתיבה לריפו
+
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: משיכת הקוד של הלקוח (קריאה בלבד)
+        uses: actions/checkout@v4 # ⛔ לקבע ל-SHA בהעתקה לריפו הפומבי
+        with:
+          path: lawstager-client
+          persist-credentials: false
+
+      - name: משיכת חבילת הסריקה בגרסה המקובעת
+        uses: actions/checkout@v4 # ⛔ לקבע ל-SHA בהעתקה לריפו הפומבי
+        with:
+          # ⛔ ממלאים בהקמת הריפו הפומבי: שם הריפו וה-SHA של החבילה (אותו SHA שהלקוח קיבע ב-uses).
+          # בזמן ריצה של workflow לשימוש חוזר, github.repository הוא של הקורא ולא של הנקרא.
+          repository: triumtech-dev/Tech_Law_stager
+          ref: LAWSTAGER_PACKAGE_SHA_TBD
+          path: lawstager-tool
+          persist-credentials: false
+
+      - name: הכנת הסביבה
+        uses: actions/setup-node@v4 # ⛔ לקבע ל-SHA בהעתקה לריפו הפומבי
+        with:
+          node-version: 22
+
+      - name: שלב 1, סריקה מקומית
+        env:
+          OUT_DIR: ${{ runner.temp }}/lawstager-out
+        run: node lawstager-tool/dist/lawstager-scan.cjs scan lawstager-client --out "$OUT_DIR"
+
+      - name: שלב 2, שליחה (התשובות שהלקוח אישר מקומית)
+        env:
+          OUT_DIR: ${{ runner.temp }}/lawstager-out
+          LAWYER_ID: ${{ inputs.lawyer-id }} # דרך env ולא בתוך הפקודה, נגד הזרקת פקודה
+          LAWSTAGER_ANSWERS: ${{ secrets.answers }}
+        run: |
+          args=(--ci --answers-env LAWSTAGER_ANSWERS --out "$OUT_DIR")
+          if [ -n "$LAWYER_ID" ]; then args+=(--lawyer "$LAWYER_ID"); fi
+          node lawstager-tool/dist/lawstager-scan.cjs send lawstager-client "${args[@]}"

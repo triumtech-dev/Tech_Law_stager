@@ -1,0 +1,15 @@
+{
+  "name": "lawstager-scan",
+  "version": "0.1.0",
+  "description": "חבילת הלקוח של סטאג'ר משפטי: סריקה מקומית של הקוד ושליחת ממצאי תהליכים אטומים, בלי קוד",
+  "bin": { "lawstager-scan": "dist/lawstager-scan.cjs" },
+  "scripts": {
+    "bundle": "esbuild src/cli.ts --bundle --platform=node --format=cjs --target=node22 --outfile=dist/lawstager-scan.cjs"
+  },
+  "engines": { "node": ">=22" },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "typescript": "^5.9.3",
+    "@types/node": "^22.10.0"
+  }
+}
