@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/cli.ts
+// src/cli.ts
 var import_promises = require("node:readline/promises");
 var import_node_path5 = require("node:path");
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/hook.ts
+// src/hook.ts
 var import_node_fs4 = require("node:fs");
 var import_node_path4 = require("node:path");
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/client/seal.ts
+// src/core/client/seal.ts
 var import_node_crypto = require("node:crypto");
 var ENVELOPE_VERSION = 1;
 var IV_BYTES = 12;
@@ -61,7 +61,7 @@ function sealSubmission(submission, options) {
   };
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/client/diff.ts
+// src/core/client/diff.ts
 var import_node_crypto2 = require("node:crypto");
 var BASELINE_SCHEMA_VERSION = 1;
 var SILENT_PROCESS_TYPES = ["accessibility", "security"];
@@ -86,11 +86,11 @@ function diffAgainstBaseline(baseline, current) {
   return { significant: true, added, removed, baselineHash: hashBaseline(baseline) };
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/scan.ts
+// src/scan.ts
 var import_node_fs2 = require("node:fs");
 var import_node_path2 = require("node:path");
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/constants.ts
+// src/core/constants.ts
 var MAX_FILE_BYTES = 1e6;
 var MAX_FILES_READ_INVENTED = 5e4;
 var EVIDENCE_MAX = 200;
@@ -98,7 +98,7 @@ var MAX_FINDINGS_PER_KIND = 25;
 var MAX_HOST_FINDINGS = 200;
 var MINIFIED_AVG_LINE = 400;
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/secrets.ts
+// src/core/analyzer/secrets.ts
 var REDACTED = "[REDACTED]";
 var PATTERNS = [
   // גוף ה-PEM הוא base64, רווחים ו-`\n` מוברח בלבד. ⛔ לא `[\s\S]*?…|$`: כותרת PEM במחרוזת רגילה הסתירה את כל שאר הקובץ.
@@ -179,7 +179,7 @@ function redactSecrets(text) {
   return maskSecrets(text);
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/evidence.ts
+// src/core/analyzer/evidence.ts
 function makeLocator(text) {
   const starts = [0];
   for (let i = 0; i < text.length; i += 1) if (text.charCodeAt(i) === 10) starts.push(i + 1);
@@ -225,7 +225,7 @@ function isCommentLine(lineText) {
   return /^\s*(?:\/\/|\/\*|\*|#(?!!)|<!--)/.test(lineText);
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/types.ts
+// src/core/analyzer/types.ts
 var PROCESS_TYPES = [
   "personal_data",
   "cookies_storage",
@@ -244,7 +244,7 @@ var PROCESS_TYPES = [
 ];
 var SKIP_REASONS = ["dependency_dir", "build_dir", "not_text", "binary", "minified", "too_large", "test", "over_limit"];
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/files.ts
+// src/core/analyzer/files.ts
 var TEXT_EXTENSIONS = /* @__PURE__ */ new Set([
   "js",
   "jsx",
@@ -358,7 +358,7 @@ function selectFiles(input) {
   return { files, secretsOnly, coverage: { filesRead: files.length, bytesRead, skipped, byExtension } };
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/rules.ts
+// src/core/analyzer/rules.ts
 var TAG_BODY = "[^>]{0,600}>?";
 var UI_EXTENSIONS = ["js", "jsx", "ts", "tsx", "mjs", "vue", "svelte", "astro", "html", "htm", "php"];
 var CODE_EXTENSIONS = [...UI_EXTENSIONS, "cjs", "mts", "cts", "py", "rb", "go", "java", "kt", "swift", "dart", "cs"];
@@ -389,7 +389,7 @@ function runRules(file, rules) {
   return out;
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/network.ts
+// src/core/analyzer/network.ts
 var URL_IN_STRING = /["'`(]\s*(https?:)?\/\/([a-z0-9-]+(?:\.[a-z0-9-]+)+)(?::\d+)?[/"'`?#)]/gi;
 var IGNORED = /(?:^|\.)(?:w3\.org|schema\.org|example\.(?:com|org|net)|localhost|xmlns\.com|purl\.org|ogp\.me|json-schema\.org|mozilla\.org|developer\.mozilla\.org|reactjs\.org|react\.dev|nextjs\.org|typescriptlang\.org|npmjs\.com|github\.com|githubusercontent\.com|stackoverflow\.com|wikipedia\.org)$|^(?:127\.0\.0\.1|0\.0\.0\.0)$/i;
 var CLASSES = [
@@ -429,7 +429,7 @@ function hostFindings(file) {
   return out;
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/rules-a11y.ts
+// src/core/analyzer/rules-a11y.ts
 var MARKUP = ["jsx", "tsx", "vue", "svelte", "astro", "html", "htm", "php"];
 var STYLES = [...UI_EXTENSIONS, "css", "scss", "sass", "less"];
 var tag = (names) => new RegExp(`<(?:${names})\\b${TAG_BODY}`, "g");
@@ -451,7 +451,7 @@ var A11Y_RULES = [
 ];
 var HTML_ROOT = /<html\b([^>]{0,600})>?/gi;
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/rules-commerce.ts
+// src/core/analyzer/rules-commerce.ts
 var UI = UI_EXTENSIONS;
 var CODE = CODE_EXTENSIONS;
 function isHiddenDecline(tag2) {
@@ -492,7 +492,7 @@ var DARK_PATTERN_RULES = [
   { kind: "hidden_decline", processType: "dark_pattern", pattern: /<(?:button|a)\b[^>]{0,600}>?[^<]{0,200}/gi, accept: isHiddenDecline, confidence: "low", extensions: UI }
 ];
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/rules-privacy.ts
+// src/core/analyzer/rules-privacy.ts
 var UI2 = UI_EXTENSIONS;
 var CODE2 = CODE_EXTENSIONS;
 var COOKIE_STORAGE_RULES = [
@@ -543,7 +543,7 @@ var CONSENT_RULES = [
   { kind: "consent_mode", processType: "cookies_storage", pattern: /gtag\s*\(\s*["']consent["']/g, confidence: "high", extensions: UI2 }
 ];
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/trackers.ts
+// src/core/analyzer/trackers.ts
 var TRACKERS = [
   { id: "google-tag-manager", signature: /googletagmanager\.com\/(?:gtm\.js|ns\.html)|["'=]GTM-[A-Z0-9]{4,}["'&]/g },
   { id: "google-analytics", signature: /googletagmanager\.com\/gtag\/js|google-analytics\.com\/(?:analytics|ga)\.js|\bgtag\s*\(\s*["']config["']|["'=]G-[A-Z0-9]{6,}["'&]|["'=]UA-\d{4,}-\d+["'&]|\bfirebase\/analytics\b|\bgetAnalytics\s*\(/g },
@@ -569,7 +569,7 @@ var TRACKER_RULES = TRACKERS.map(({ id, signature }) => ({
   extensions: [...CODE_EXTENSIONS, "json"]
 }));
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/vendors.ts
+// src/core/analyzer/vendors.ts
 var VENDORS = [
   // תשלום
   { pkg: "stripe", vendor: "stripe", processType: "payments" },
@@ -698,7 +698,7 @@ function vendorFindings(file) {
   return out;
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/analyzer/analyze.ts
+// src/core/analyzer/analyze.ts
 var ALL_RULES = [
   ...COOKIE_STORAGE_RULES,
   ...PERSONAL_DATA_RULES,
@@ -763,7 +763,7 @@ function analyzeRepo(input) {
   return { findings, totals, coverage };
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/client-findings.ts
+// src/core/client-findings.ts
 var CLIENT_FINDINGS_SCHEMA_VERSION = 1;
 var REFERENCES_PER_KIND_INVENTED = 5;
 var CONFIDENCE_RANK = { low: 0, medium: 1, high: 2 };
@@ -801,7 +801,7 @@ function buildClientFindings(result, analyzerVersion) {
   };
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/client/process-labels.ts
+// src/core/client/process-labels.ts
 var EXACT = {
   accessibility_statement_link: "\u05E7\u05D9\u05E9\u05D5\u05E8 \u05DC\u05D4\u05E6\u05D4\u05E8\u05EA \u05E0\u05D2\u05D9\u05E9\u05D5\u05EA",
   account_deletion: "\u05DE\u05D7\u05D9\u05E7\u05EA \u05D7\u05E9\u05D1\u05D5\u05DF \u05DE\u05E9\u05EA\u05DE\u05E9",
@@ -884,7 +884,7 @@ function describeKind(kind) {
   }
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/client/preview.ts
+// src/core/client/preview.ts
 var PREVIEW_DISCLAIMER = "\u05D6\u05D5 \u05EA\u05E6\u05D5\u05D2\u05D4 \u05DC\u05E7\u05E8\u05D9\u05D0\u05D4 \u05D1\u05DC\u05D1\u05D3. \u05D0\u05D9\u05DF \u05DC\u05D4 \u05EA\u05D5\u05E7\u05E3 \u05DE\u05D5\u05DC \u05D4\u05E9\u05E8\u05EA, \u05D5\u05D4\u05D3\u05D5\u05D7 \u05DE\u05D1\u05D5\u05E1\u05E1 \u05E8\u05E7 \u05E2\u05DC \u05D4\u05E7\u05D5\u05D1\u05E5 \u05D4\u05D0\u05D8\u05D5\u05DD \u05E9\u05D9\u05D9\u05E9\u05DC\u05D7.";
 function reviewItems(findings) {
   return findings.processes.map((p) => ({
@@ -908,7 +908,7 @@ function renderPreview(findings) {
   return lines.join("\n");
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/walk.ts
+// src/walk.ts
 var import_node_fs = require("node:fs");
 var import_node_path = require("node:path");
 var SKIP_DIRS = /* @__PURE__ */ new Set(["node_modules", ".git", ".next", "dist", "build", "out", "vendor", ".venv", "__pycache__"]);
@@ -939,7 +939,7 @@ function readProjectFiles(root) {
   return out;
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/scan.ts
+// src/scan.ts
 var ANALYZER_VERSION = "0.1.0";
 var OUT_DIR_NAME = ".lawstager";
 var FINDINGS_FILE = "lawstager-findings.json";
@@ -967,30 +967,30 @@ function runScan(root, options = {}) {
   return { findings, state, preview, outDir };
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/send.ts
+// src/send.ts
 var import_node_crypto3 = require("node:crypto");
 var import_node_fs3 = require("node:fs");
 var import_node_path3 = require("node:path");
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/client/consent.ts
-var CLIENT_SCAN_CONSENT_VERSION = "2026-11-05.1-DRAFT";
+// src/core/client/consent.ts
+var CLIENT_SCAN_CONSENT_VERSION = "2026-11-05.1";
 var CLIENT_SCAN_CONSENT_PARAGRAPHS = [
   "\u05D4\u05D7\u05D1\u05D9\u05DC\u05D4 \u05E1\u05E8\u05E7\u05D4 \u05D0\u05EA \u05D4\u05E7\u05D5\u05D3 \u05D1\u05DE\u05D7\u05E9\u05D1 \u05E9\u05DC\u05DA. \u05D4\u05E7\u05D5\u05D3 \u05E2\u05E6\u05DE\u05D5 \u05DC\u05D0 \u05E0\u05E9\u05DC\u05D7 \u05D5\u05DC\u05D0 \u05D9\u05D9\u05E9\u05DC\u05D7.",
   "\u05D9\u05D9\u05E9\u05DC\u05D7\u05D5: \u05EA\u05D9\u05D0\u05D5\u05E8 \u05D4\u05EA\u05D4\u05DC\u05D9\u05DB\u05D9\u05DD \u05E9\u05E0\u05DE\u05E6\u05D0\u05D5 (\u05DC\u05DE\u05E9\u05DC \u05D0\u05D9\u05D6\u05D4 \u05DE\u05D9\u05D3\u05E2 \u05E0\u05D0\u05E1\u05E3 \u05D5\u05DC\u05D0\u05DF \u05D4\u05D5\u05D0 \u05E2\u05D5\u05D1\u05E8), \u05E9\u05DE\u05D5\u05EA \u05E1\u05E4\u05E7\u05D9\u05DD \u05D5\u05D3\u05D5\u05DE\u05D9\u05D9\u05E0\u05D9\u05DD, \u05D5\u05D4\u05E4\u05E0\u05D9\u05D5\u05EA \u05DC\u05E7\u05D5\u05D1\u05E5 \u05D5\u05DC\u05E9\u05D5\u05E8\u05D4, \u05D1\u05DC\u05D9 \u05E7\u05D8\u05E2\u05D9 \u05E7\u05D5\u05D3. \u05DC\u05E4\u05E0\u05D9 \u05D4\u05E9\u05DC\u05D9\u05D7\u05D4 \u05D4\u05D5\u05E1\u05E8\u05D5 \u05DE\u05E4\u05EA\u05D7\u05D5\u05EA, \u05E1\u05D9\u05E1\u05DE\u05D0\u05D5\u05EA \u05D5\u05D8\u05D5\u05E7\u05E0\u05D9\u05DD \u05E9\u05D6\u05D5\u05D4\u05D5. \u05D4\u05D4\u05E1\u05E8\u05D4 \u05DE\u05E6\u05DE\u05E6\u05DE\u05EA \u05E1\u05D9\u05DB\u05D5\u05DF \u05D5\u05D0\u05D9\u05E0\u05D4 \u05DE\u05D1\u05D8\u05D9\u05D7\u05D4 \u05E9\u05DC\u05D0 \u05D9\u05D9\u05E9\u05DC\u05D7 \u05DE\u05D9\u05D3\u05E2 \u05DE\u05D6\u05D4\u05D4. \u05D9\u05D9\u05E9\u05DC\u05D7\u05D5 \u05D2\u05DD \u05D4\u05E4\u05E8\u05D8\u05D9\u05DD \u05E9\u05DE\u05D9\u05DC\u05D0\u05EA (\u05E9\u05DD \u05D4\u05DE\u05E2\u05E8\u05DB\u05EA, \u05DB\u05EA\u05D5\u05D1\u05EA \u05D4\u05D0\u05EA\u05E8 \u05D5\u05E4\u05E8\u05D8\u05D9 \u05D4\u05E7\u05E9\u05E8 \u05E9\u05DC\u05DA), \u05D4\u05D0\u05D9\u05E9\u05D5\u05E8\u05D9\u05DD \u05D5\u05D4\u05D4\u05E1\u05EA\u05D9\u05D9\u05D2\u05D5\u05D9\u05D5\u05EA \u05E9\u05E1\u05D9\u05DE\u05E0\u05EA \u05D5\u05D4\u05D4\u05E2\u05E8\u05D5\u05EA \u05E9\u05DB\u05EA\u05D1\u05EA.",
   "\u05D4\u05E7\u05D5\u05D1\u05E5 \u05DE\u05D5\u05E6\u05E4\u05DF \u05D5\u05E0\u05E4\u05EA\u05D7 \u05E8\u05E7 \u05D1\u05E9\u05E8\u05EA \u05E9\u05DC\u05E0\u05D5. \u05E2\u05D5\u05E8\u05DA \u05D4\u05D3\u05D9\u05DF \u05E8\u05D5\u05D0\u05D4 \u05E8\u05E7 \u05D0\u05EA \u05E4\u05E8\u05D8\u05D9 \u05D4\u05E7\u05E9\u05E8 \u05E9\u05DC\u05DA \u05E2\u05D3 \u05E9\u05D4\u05D5\u05D0 \u05DE\u05E1\u05DB\u05DD \u05D0\u05D9\u05EA\u05DA \u05D0\u05EA \u05D4\u05E2\u05E1\u05E7\u05D4 \u05D5\u05E4\u05D5\u05EA\u05D7 \u05D0\u05EA \u05D4\u05DE\u05DE\u05E6\u05D0\u05D9\u05DD. \u05D4\u05DE\u05DE\u05E6\u05D0\u05D9\u05DD \u05DE\u05E2\u05D5\u05D1\u05D3\u05D9\u05DD \u05D1\u05DE\u05D5\u05D3\u05DC \u05D1\u05D9\u05E0\u05D4 \u05DE\u05DC\u05D0\u05DB\u05D5\u05EA\u05D9\u05EA \u05D1-Vertex AI \u05E9\u05DC Google \u05D1\u05D0\u05D9\u05E8\u05D5\u05E4\u05D4. \u05D4\u05DD \u05E0\u05E9\u05DE\u05E8\u05D9\u05DD \u05DB\u05DC \u05E2\u05D5\u05D3 \u05D4\u05EA\u05D9\u05E7 \u05E9\u05DC \u05E2\u05D5\u05E8\u05DA \u05D4\u05D3\u05D9\u05DF \u05E4\u05E2\u05D9\u05DC \u05D5\u05E2\u05D3 30 \u05D9\u05D5\u05DD \u05D0\u05D7\u05E8\u05D9 \u05E1\u05D2\u05D9\u05E8\u05EA\u05D5. \u05E7\u05D5\u05D1\u05E5 \u05E9\u05E2\u05D5\u05E8\u05DA \u05D3\u05D9\u05DF \u05DC\u05D0 \u05E4\u05EA\u05D7 \u05E0\u05DE\u05D7\u05E7 \u05D0\u05D7\u05E8\u05D9 30 \u05D9\u05D5\u05DD.",
-  "\u05D4\u05DE\u05E1\u05DE\u05DB\u05D9\u05DD \u05E9\u05D9\u05D5\u05E4\u05E7\u05D5 \u05D4\u05DD \u05D8\u05D9\u05D5\u05D8\u05D4 \u05E9\u05E2\u05D5\u05E8\u05DA \u05D4\u05D3\u05D9\u05DF \u05E2\u05D5\u05E8\u05DA \u05D5\u05DE\u05D0\u05E9\u05E8. \u05D4\u05DD \u05EA\u05D5\u05E6\u05E8 \u05E9\u05DC \u05D1\u05D9\u05E0\u05D4 \u05DE\u05DC\u05D0\u05DB\u05D5\u05EA\u05D9\u05EA, \u05D5\u05D0\u05D9\u05E0\u05DD \u05D9\u05D9\u05E2\u05D5\u05E5 \u05DE\u05E9\u05E4\u05D8\u05D9 \u05E2\u05D3 \u05E9\u05E2\u05D5\u05E8\u05DA \u05D4\u05D3\u05D9\u05DF \u05D0\u05D9\u05E9\u05E8 \u05D0\u05D5\u05EA\u05DD."
+  "\u05D4\u05DE\u05E1\u05DE\u05DB\u05D9\u05DD \u05E9\u05D9\u05D5\u05E4\u05E7\u05D5 \u05D4\u05DD \u05EA\u05D5\u05E6\u05E8 \u05E9\u05DC \u05D1\u05D9\u05E0\u05D4 \u05DE\u05DC\u05D0\u05DB\u05D5\u05EA\u05D9\u05EA \u05E9\u05E2\u05D5\u05E8\u05DA \u05D4\u05D3\u05D9\u05DF \u05E2\u05D5\u05E8\u05DA \u05D5\u05DE\u05D0\u05E9\u05E8. \u05D4\u05DD \u05D0\u05D9\u05E0\u05DD \u05D9\u05D9\u05E2\u05D5\u05E5 \u05DE\u05E9\u05E4\u05D8\u05D9 \u05E2\u05D3 \u05E9\u05E2\u05D5\u05E8\u05DA \u05D4\u05D3\u05D9\u05DF \u05D0\u05D9\u05E9\u05E8 \u05D0\u05D5\u05EA\u05DD."
 ];
-var HOOK_CONSENT_VERSION = "2026-11-05.1-HOOK-DRAFT";
+var HOOK_CONSENT_VERSION = "2026-11-05.1-HOOK";
 var HOOK_CONSENT_CHECKBOX = "\u05D0\u05E0\u05D9 \u05DE\u05E1\u05DB\u05D9\u05DD \u05E9\u05D1\u05DB\u05DC \u05E4\u05E2\u05DD \u05E9\u05D4\u05E7\u05D5\u05D3 \u05D9\u05E9\u05EA\u05E0\u05D4 \u05D1\u05D0\u05D5\u05E4\u05DF \u05E9\u05DE\u05E9\u05E4\u05D9\u05E2 \u05E2\u05DC \u05D4\u05DE\u05E1\u05DE\u05DB\u05D9\u05DD \u05D4\u05DE\u05E9\u05E4\u05D8\u05D9\u05D9\u05DD, \u05D9\u05D9\u05D5\u05D5\u05E6\u05E8 \u05D5\u05D9\u05D9\u05E9\u05DC\u05D7 \u05D0\u05D5\u05D8\u05D5\u05DE\u05D8\u05D9\u05EA \u05D3\u05D5\u05D7 \u05E9\u05D9\u05E0\u05D5\u05D9\u05D9\u05DD (\u05D1\u05DC\u05D9 \u05E7\u05D5\u05D3) \u05D1\u05E0\u05D5\u05E1\u05D7 \u05D4\u05D4\u05E1\u05DB\u05DE\u05D4 \u05E9\u05DC\u05DE\u05E2\u05DC\u05D4. \u05D4\u05D4\u05D5\u05E7 \u05D0\u05D9\u05E0\u05D5 \u05DE\u05E2\u05D3\u05DB\u05DF \u05E9\u05D5\u05DD \u05DE\u05E1\u05DE\u05DA \u05D1\u05D0\u05EA\u05E8 \u05E9\u05DC\u05D9, \u05D5\u05D0\u05D5\u05DB\u05DC \u05DC\u05D4\u05E1\u05D9\u05E8 \u05D0\u05D5\u05EA\u05D5 \u05D1\u05DB\u05DC \u05E2\u05EA.";
 var CLIENT_SCAN_CONSENT_CHECKBOX = "\u05E2\u05D1\u05E8\u05EA\u05D9 \u05E2\u05DC \u05D4\u05EA\u05D4\u05DC\u05D9\u05DB\u05D9\u05DD \u05E9\u05DE\u05D5\u05E6\u05D2\u05D9\u05DD, \u05D0\u05D9\u05E9\u05E8\u05EA\u05D9 \u05D0\u05EA \u05D0\u05DC\u05D4 \u05E9\u05E0\u05DB\u05D5\u05E0\u05D9\u05DD \u05D5\u05E1\u05D9\u05DE\u05E0\u05EA\u05D9 \u05D0\u05EA \u05D0\u05DC\u05D4 \u05E9\u05DC\u05D0. \u05D0\u05E0\u05D9 \u05DE\u05D5\u05E8\u05E9\u05D4 \u05DC\u05D1\u05E7\u05E9 \u05E1\u05E8\u05D9\u05E7\u05D4 \u05D5\u05E9\u05DC\u05D9\u05D7\u05D4 \u05D1\u05E9\u05DD \u05D4\u05D2\u05D5\u05E3 \u05E9\u05DE\u05E4\u05E2\u05D9\u05DC \u05D0\u05EA \u05D4\u05DE\u05E2\u05E8\u05DB\u05EA, \u05D5\u05DE\u05E1\u05DB\u05D9\u05DD \u05DC\u05E2\u05D9\u05D1\u05D5\u05D3 \u05DB\u05DE\u05EA\u05D5\u05D0\u05E8 \u05DB\u05D0\u05DF.";
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/client/protocol.ts
+// src/core/client/protocol.ts
 var POOL_LAWYER_ID = "pool";
 var LAWSTAGER_ENDPOINT_INVENTED = "https://europe-west1-israelaw.cloudfunctions.net";
 var BEGIN_FUNCTION = "beginClientScan";
 var SUBMIT_FUNCTION = "submitClientScan";
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/client/findings-validate.ts
+// src/core/client/findings-validate.ts
 var MAX_PROCESSES_INVENTED = 600;
 var KIND_PATTERN = /^[A-Za-z0-9_:.*\-]{1,200}$/;
 var EXT_PATTERN = /^[A-Za-z0-9_+\-]{0,16}$/;
@@ -1049,7 +1049,7 @@ function isValidFindingsFile(value) {
   return validCoverage(value.coverage);
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/core/client/submission.ts
+// src/core/client/submission.ts
 var DISAGREE_NOTE_MAX_INVENTED = 500;
 var DECLARATION_MAX_INVENTED = 4e3;
 var FIELD_MAX_INVENTED = 200;
@@ -1125,7 +1125,7 @@ function buildSubmission(input) {
   };
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/send.ts
+// src/send.ts
 var ANSWERS_FILE = "lawstager-answers.json";
 var BASELINE_FILE = "lawstager-baseline.json";
 function readJson(path) {
@@ -1238,7 +1238,7 @@ async function transmit(input, state, options) {
   });
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/hook.ts
+// src/hook.ts
 async function runHook(options) {
   if (!(0, import_node_fs4.existsSync)(options.baselinePath)) throw new Error("\u05D0\u05D9\u05DF \u05E7\u05D5\u05D1\u05E5 \u05D1\u05E1\u05D9\u05E1. \u05D4\u05E8\u05E5 \u05E7\u05D5\u05D3\u05DD send \u05D9\u05D3\u05E0\u05D9, \u05D5\u05D4\u05DB\u05E0\u05E1 \u05D0\u05EA lawstager-baseline.json \u05DC\u05E8\u05D9\u05E4\u05D5");
   const baseline = parseJsonSafe((0, import_node_fs4.readFileSync)(options.baselinePath, "utf8"), "\u05E7\u05D5\u05D1\u05E5 \u05D4\u05D1\u05E1\u05D9\u05E1 \u05D0\u05D9\u05E0\u05D5 JSON \u05EA\u05E7\u05D9\u05DF");
@@ -1266,7 +1266,7 @@ async function runHook(options) {
   return { sent: true, scanId: result.scanId, added: diff.added, removed: diff.removed };
 }
 
-// ../../../../../Users/User/AppData/Local/Temp/claude/8f433162ca0cb8b3/4a05b86d-fc4a-4091-891f-4e28333938c1/scratchpad/pub/src/cli.ts
+// src/cli.ts
 function flag(args, name) {
   const index = args.indexOf(`--${name}`);
   return index >= 0 ? args[index + 1] : void 0;
