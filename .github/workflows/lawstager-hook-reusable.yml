@@ -39,7 +39,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: triumtech-dev/Tech_Law_stager
-          ref: a084176968d9ff7db82c8f09818c8fddfa9f330a
+          ref: 803ed2537a0326a829533ee709487c44127e891d
           path: lawstager-tool
           persist-credentials: false
 

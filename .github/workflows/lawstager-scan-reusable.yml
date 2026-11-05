@@ -47,7 +47,7 @@ jobs:
           # ⛔ ממלאים בהקמת הריפו הפומבי: שם הריפו וה-SHA של החבילה (אותו SHA שהלקוח קיבע ב-uses).
           # בזמן ריצה של workflow לשימוש חוזר, github.repository הוא של הקורא ולא של הנקרא.
           repository: triumtech-dev/Tech_Law_stager
-          ref: a084176968d9ff7db82c8f09818c8fddfa9f330a
+          ref: 803ed2537a0326a829533ee709487c44127e891d
           path: lawstager-tool
           persist-credentials: false
 
